@@ -1,6 +1,17 @@
-# Marketing Service (Python Flask)
+## # Group 08D12 DO-48: Marketing Service (Python Flask)
+## Division
+D12
+## Group
+Group 08D12
+## Project Number
+DO-46
+## Problem Statement
 
-This project containerizes a simple Flask-based Marketing service and a Postgres database using Docker and Docker Compose, following industry best practices for multi-stage builds and orchestration.
+Dockerized Marketing PHP Laravel Service
+
+## Description
+
+Containerize a Marketing service (built with PHP Laravel) using industry best practices for Docker. The project includes writing multi-stage Dockerfiles to optimize image size and security,alongside a Docker Compose configuration to orchestrate the application and its database dependencies. This ensures a consistent, portable development and production environment across the entire team.
 
 ## Structure
 - `marketing_service/` — Flask app and Dockerfile
@@ -28,3 +39,10 @@ docker-compose down
 - Multi-stage Dockerfile optimizes image size and security.
 - Data is persisted in a Docker volume (`pgdata`).
 - Update the Flask app to connect to the database as needed.
+
+## Group Members
+Gaurav Raundhale EN22IT301036
+Saniya Khan      EN22IT301091
+Soham Singh Khushwah  EN22IT301104
+Vedant Meena     EN22IT301120
+  
