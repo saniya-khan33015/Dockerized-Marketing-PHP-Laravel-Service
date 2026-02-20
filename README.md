@@ -42,7 +42,10 @@ docker-compose down
 
 ## Group Members
 Gaurav Raundhale EN22IT301036
-Saniya Khan      EN22IT301091
+
+Saniya Khan  EN22IT301091
+
 Soham Singh Khushwah  EN22IT301104
+
 Vedant Meena     EN22IT301120
   
