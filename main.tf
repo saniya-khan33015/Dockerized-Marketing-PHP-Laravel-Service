@@ -52,17 +52,17 @@ provider "docker" {}
 
 # AWS provider configuration
 provider "aws" {
-  region                  = var.aws_region
-  access_key              = var.aws_access_key
-  secret_key              = var.aws_secret_key
+  region     = var.aws_region
+  access_key = var.aws_access_key
+  secret_key = var.aws_secret_key
 }
 
 # EC2 instance resource
 resource "aws_instance" "example" {
-  ami           = var.aws_ami
-  instance_type = var.aws_instance_type
-  key_name      = var.aws_key_name
-  subnet_id     = var.aws_subnet_id
+  ami                    = var.aws_ami
+  instance_type          = var.aws_instance_type
+  key_name               = var.aws_key_name
+  subnet_id              = var.aws_subnet_id
   vpc_security_group_ids = [var.aws_security_group_id]
   tags = {
     Name = var.aws_instance_name
