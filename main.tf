@@ -69,13 +69,28 @@ resource "aws_instance" "example" {
   user_data = <<-EOF
     #!/bin/bash
     apt-get update -y
-    apt-get install -y python3-pip git
-    cd /home/ubuntu
-    git clone https://github.com/saniya-khan33015/Dockerized-Marketing-PHP-Laravel-Service.git app
-    cd app
-    pip3 install -r requirements.txt
-    nohup python3 app/main.py &
+    apt-get install -y python3-pip python3-flask
+    cat <<EOPY > /home/ubuntu/app.py
+from flask import Flask
+app = Flask(__name__)
+@app.route('/')
+def hello():
+    return 'Hello from your AWS EC2 instance!'
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=80)
+EOPY
+    nohup python3 /home/ubuntu/app.py &
   EOF
+}
+# Output EC2 public IP and URL
+output "ec2_public_ip" {
+  description = "Public IP address of the EC2 instance"
+  value       = aws_instance.example.public_ip
+}
+
+output "ec2_public_url" {
+  description = "URL to access the deployed app"
+  value       = "http://${aws_instance.example.public_ip}"
 }
 # Output EC2 public IP
 output "ec2_public_ip" {
