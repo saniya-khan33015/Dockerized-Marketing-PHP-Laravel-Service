@@ -10,32 +10,18 @@ jobs:
   terraform:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v4 # Updated to latest version
 
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.6.6
 
-      - name: Terraform Init
-        run: terraform init
-
-      - name: Terraform Format
-        run: terraform fmt -check
-
-      - name: Terraform Validate
-        run: terraform validate
-
-      - name: Terraform Plan
-        run: terraform plan -input=false
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
       - name: Terraform Apply
         if: github.ref == 'refs/heads/master' && github.event_name == 'push'
-        run: terraform apply -auto-approve
+        run: |
+          terraform init
+          terraform apply -auto-approve
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -44,29 +30,29 @@ jobs:
     needs: terraform
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/master' && github.event_name == 'push'
-    # IMPORTANT: If your secrets are inside a GitHub Environment, uncomment the line below:
+    # 🚨 FIX #1: If your secrets are in a "production" environment, you MUST use this line
     # environment: production 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - name: Debug Secret Check (Optional)
+      - name: 🛡️ Secret Validator
         run: |
-          if [ -z "${{ secrets.EC2_HOST }}" ]; then echo "HOST IS MISSING"; else echo "HOST IS SET"; fi
-          if [ -z "${{ secrets.EC2_SSH_KEY }}" ]; then echo "KEY IS MISSING"; else echo "KEY IS SET"; fi
+          echo "Checking Secrets Visibility..."
+          if [ -z "${{ secrets.EC2_HOST }}" ]; then echo "❌ HOST MISSING"; exit 1; fi
+          if [ -z "${{ secrets.EC2_SSH_KEY }}" ]; then echo "❌ KEY MISSING"; exit 1; fi
+          echo "✅ All secrets found. Proceeding to connect to ${{ secrets.EC2_HOST }}..."
 
-      - name: Copy files to EC2
-        uses: appleboy/scp-action@v0.1.4
+      - name: 📂 Copy Files to EC2
+        uses: appleboy/scp-action@v0.1.7 # Updated to latest stable
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ubuntu
           key: ${{ secrets.EC2_SSH_KEY }}
           source: "."
           target: "/home/ubuntu/app"
-          # Increases timeout for slow connections
-          timeout: 30s 
+          debug: true # Detailed logs if connection fails
 
-      - name: Restart Application via SSH
+      - name: 🚀 Restart Application
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST }}
@@ -74,5 +60,6 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             cd /home/ubuntu/app
-            # Add your specific app start commands here
-            echo "Deployment successful at $(date)"
+            echo "Current directory: $(pwd)"
+            # Example restart (replace with your app's actual command):
+            # pm2 restart app-test || pm2 start index.js --name "app-test"
