@@ -1,18 +1,12 @@
 
 terraform {
   required_providers {
-    docker = {
-      source  = "kreuzwerker/docker"
-      version = "~> 3.0"
-    }
     aws = {
       source  = "hashicorp/aws"
       version = "~> 6.0"
     }
   }
 }
-
-provider "docker" {}
 
 
 ## Docker resources are commented out to skip Docker builds
